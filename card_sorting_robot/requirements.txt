@@ -1,0 +1,29 @@
+# 图像处理和计算机视觉
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# OCR 识别
+easyocr>=1.7.0
+# tesseract-ocr 需要系统级安装: sudo apt-get install tesseract-ocr tesseract-ocr-chi-sim
+pytesseract>=0.3.10
+
+# 数据库
+sqlite3  # Python 内置，无需安装
+
+# 机械臂控制
+pyserial>=3.5
+# 如果使用 SO-ARM100，可能需要额外的驱动库
+
+# 配置文件处理
+PyYAML>=6.0
+
+# 日志和工具
+colorlog>=6.7.0
+tqdm>=4.65.0
+
+# GUI (可选)
+# tkinter  # Python 内置
+
+# 开发和测试
+pytest>=7.4.0

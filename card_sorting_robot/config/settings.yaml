@@ -1,0 +1,141 @@
+# 卡片分拣机器人配置文件
+
+# 摄像头配置
+camera:
+  device_id: 0  # 摄像头设备ID，通常0是默认摄像头
+  resolution:
+    width: 1920
+    height: 1080
+  fps: 30
+  autofocus: true
+  exposure: -1  # -1 为自动曝光
+  brightness: 0  # 亮度调整 (-100 到 100)
+  contrast: 0    # 对比度调整
+
+# OCR 识别配置
+ocr:
+  engine: "easyocr"  # 可选 "easyocr" 或 "tesseract"
+  languages: ['ch_sim', 'en']  # 支持的语言
+  confidence_threshold: 0.6  # 识别置信度阈值 (0-1)
+  roi:  # 感兴趣区域 (相对坐标，0-1)
+    x: 0.6  # 番号通常在卡片右下角
+    y: 0.85
+    width: 0.35
+    height: 0.12
+  # 番号格式验证正则表达式（根据实际卡片调整）
+  card_number_pattern: "^[A-Z0-9\\-]{5,15}$"
+  max_retry: 3  # 最大重试次数
+
+# 图像处理配置
+image_processing:
+  save_original: true  # 是否保存原始图像
+  save_processed: true  # 是否保存处理后的图像
+  image_format: "jpg"
+  jpeg_quality: 95
+  preprocessing:
+    grayscale: true
+    denoise: true
+    denoise_strength: 5
+    adaptive_threshold: true
+    edge_detection: false
+
+# 数据库配置
+database:
+  path: "data/cards.db"
+  backup_enabled: true
+  backup_interval: 100  # 每处理多少张卡片备份一次
+
+# 机械臂配置
+robot_arm:
+  type: "SO-ARM100"  # 机械臂型号
+  port: "/dev/ttyUSB0"  # 串口设备
+  baudrate: 115200
+  timeout: 1.0
+
+  # 关键位置坐标 (单位: mm 或 度，根据实际机械臂调整)
+  positions:
+    home:  # 初始位置/待机位置
+      x: 0
+      y: 150
+      z: 200
+      rx: 0
+      ry: 0
+      rz: 0
+
+    card_pile:  # 卡堆位置（抓取位置）
+      x: 200
+      y: 0
+      z: 50
+      rx: 0
+      ry: 90
+      rz: 0
+
+    scan_position:  # 扫描位置（摄像头下方）
+      x: 0
+      y: -150
+      z: 80
+      rx: 0
+      ry: 0
+      rz: 0
+
+    success_pile:  # 识别成功卡片放置位置
+      x: -200
+      y: 0
+      z: 50
+      rx: 0
+      ry: 90
+      rz: 0
+
+    failed_pile:  # 识别失败卡片放置位置
+      x: -200
+      y: 100
+      z: 50
+      rx: 0
+      ry: 90
+      rz: 0
+
+  # 运动参数
+  motion:
+    speed: 50  # 运动速度 (%)
+    acceleration: 30  # 加速度 (%)
+    gripper_open_value: 100  # 夹爪/吸盘打开值
+    gripper_close_value: 0   # 夹爪/吸盘关闭值
+    grip_delay: 0.5  # 抓取后等待时间(秒)
+    release_delay: 0.3  # 释放后等待时间(秒)
+
+  # 安全设置
+  safety:
+    max_retries: 3  # 运动失败最大重试次数
+    emergency_stop_enabled: true
+    workspace_limits:  # 工作空间限制
+      x_min: -300
+      x_max: 300
+      y_min: -200
+      y_max: 200
+      z_min: 0
+      z_max: 300
+
+# 主流程配置
+main_process:
+  max_cards: 1000  # 最大处理卡片数量，0表示无限制
+  scan_interval: 0.5  # 扫描间隔时间(秒)
+  auto_resume: true  # 发生错误后是否自动恢复
+  stop_on_error: false  # 遇到错误是否停止
+  statistics_interval: 10  # 每处理多少张卡片输出一次统计信息
+
+# 日志配置
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  console_output: true
+  file_output: true
+  log_file: "data/logs/robot.log"
+  max_file_size: 10485760  # 10MB
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 调试配置
+debug:
+  enabled: false
+  simulation_mode: false  # 仿真模式，不实际控制机械臂
+  save_debug_images: true
+  show_preview: false  # 是否显示实时预览窗口
